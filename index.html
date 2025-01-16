@@ -3,61 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pintor por gestos</title>
-    <style>
-        /* Estilo general para centrar el contenido */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Altura total de la ventana */
-            margin: 0; /* Elimina el margen predeterminado */
-            background-color: #f0f0f0; /* Fondo claro */
-            font-family: Arial, sans-serif; /* Tipografía básica */
-        }
-
-        /* Cuadro central */
-        .content-box {
-            width: 80%; /* Ancho ajustable */
-            max-width: 600px; /* Ancho máximo */
-            padding: 20px;
-            background-color: #ffffff; /* Fondo blanco */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
-            border-radius: 10px; /* Bordes redondeados */
-            text-align: center; /* Texto centrado */
-        }
-
-        /* Título */
-        h1 {
-            font-size: 1.5rem;
-            color: #333333;
-            margin-bottom: 10px;
-        }
-
-        /* Texto descriptivo */
-        p {
-            font-size: 1rem;
-            color: #555555;
-            line-height: 1.5;
-        }
-    </style>
+    <title>Pintor por Gestos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="content-box">
         <h1>Pintor por Gestos</h1>
         <p>
-            <strong>Concepto:</strong> Una app que permita al usuario "pintar" en la pantalla con gestos detectados por la cámara.
+            Mueve tu mano frente a la cámara para empezar a pintar. Presiona <strong>"C"</strong> para borrar el lienzo.
         </p>
-        <p>
-            <strong>Técnicas involucradas:</strong> Seguimiento de manos o dedos.
-        </p>
-        <p>
-            <strong>Interacción:</strong> Moviendo la mano o los dedos, el usuario controla el pincel para dibujar en un lienzo digital.
-        </p>
-        <p>
-            <strong>Objetivo:</strong> Crear una herramienta de dibujo experimental.
-        </p>
+        <!-- Contenedor del lienzo -->
+        <div id="canvas-container">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
+            <script src="sketch.js"></script>
+        </div>
     </div>
 </body>
 </html>
+
 
