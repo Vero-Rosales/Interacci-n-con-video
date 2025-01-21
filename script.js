@@ -52,8 +52,6 @@ function getDominantEmotion(emotions) {
     sad: "Triste",
     angry: "Enojado",
     surprised: "Sorprendido",
-    disgusted: "Disgustado", // Opcional, dependiendo del modelo
-    fearful: "Con miedo", // Opcional
   };
 
   if (emotions) {
