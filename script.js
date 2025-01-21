@@ -62,3 +62,5 @@ function displayPalette(colors) {
     palette.appendChild(colorBox);
   });
 }
+
+
