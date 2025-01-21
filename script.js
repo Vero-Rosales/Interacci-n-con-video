@@ -1,76 +1,64 @@
-let video;
-let faceapi;
-let detections = [];
-let emotion = "Neutral";
+// script.js
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const palette = document.getElementById("palette");
+const ctx = canvas.getContext("2d");
 
-function setup() {
-  createCanvas(640, 480);
-  video = createCapture(VIDEO);
-  video.size(width, height);
-  video.hide();
+// Configurar acceso a la cámara
+navigator.mediaDevices
+  .getUserMedia({ video: true })
+  .then((stream) => {
+    video.srcObject = stream;
+    video.addEventListener("play", () => {
+      setInterval(analyzeColors, 1000); // Analiza colores cada segundo
+    });
+  })
+  .catch((err) => {
+    console.error("Error al acceder a la cámara: ", err);
+  });
 
-  // Carga el modelo de reconocimiento facial
-  const faceOptions = {
-    withLandmarks: true,
-    withDescriptors: false,
-    minConfidence: 0.5,
-  };
-  faceapi = ml5.faceApi(video, faceOptions, modelReady);
+// Analiza colores dominantes en la imagen
+function analyzeColors() {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Obtener datos de píxeles
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const colors = extractColors(imageData.data);
+  displayPalette(colors);
 }
 
-function modelReady() {
-  console.log("Modelo cargado");
-  faceapi.detect(gotResults);
-}
+// Extrae colores dominantes
+function extractColors(data) {
+  const colorMap = {};
+  const step = 4; // Saltar cada 4 valores RGBA
 
-function gotResults(err, result) {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  detections = result;
+  for (let i = 0; i < data.length; i += step) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const color = `rgb(${r},${g},${b})`;
 
-  if (detections && detections.length > 0 && detections[0].expressions) {
-    // Analiza la emoción más fuerte
-    const emotions = detections[0].expressions;
-    emotion = getDominantEmotion(emotions);
-  } else {
-    emotion = "Neutral"; // Si no hay detecciones o datos, mostrar Neutral
-  }
-
-  faceapi.detect(gotResults); // Sigue detectando
-}
-
-function getDominantEmotion(emotions) {
-  let maxConfidence = 0;
-  let dominantEmotion = "Neutral";
-
-  // Agrega un mapeo más descriptivo para las emociones
-  const emotionMapping = {
-    neutral: "Neutral",
-    happy: "Feliz",
-    sad: "Triste",
-    angry: "Enojado",
-    surprised: "Sorprendido",
-  };
-
-  if (emotions) {
-    for (let [key, value] of Object.entries(emotions)) {
-      if (value > maxConfidence) {
-        maxConfidence = value;
-        dominantEmotion = emotionMapping[key] || key; // Usa el mapeo, o la clave original si no existe
-      }
+    if (!colorMap[color]) {
+      colorMap[color] = 0;
     }
+    colorMap[color]++;
   }
-  return dominantEmotion;
+
+  // Ordenar colores por frecuencia
+  const sortedColors = Object.entries(colorMap).sort((a, b) => b[1] - a[1]);
+  const dominantColors = sortedColors.slice(0, 5).map(([color]) => color);
+  return dominantColors;
 }
 
-function draw() {
-  image(video, 0, 0, width, height);
-
-  // Dibuja el cuadro de texto de emoción
-  fill(0, 255, 0);
-  textSize(32);
-  textAlign(CENTER, CENTER);
-  text(emotion, width / 2, height - 40);
+// Muestra la paleta de colores
+function displayPalette(colors) {
+  palette.innerHTML = ""; // Limpiar la paleta
+  colors.forEach((color) => {
+    const colorBox = document.createElement("div");
+    colorBox.className = "color-box";
+    colorBox.style.backgroundColor = color;
+    palette.appendChild(colorBox);
+  });
 }
